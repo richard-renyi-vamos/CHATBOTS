@@ -1,0 +1,53 @@
+from textblob import TextBlob
+import random
+import json
+
+# Load existing knowledge base from a file
+knowledge_base = {}
+try:
+    with open("knowledge_base.json", "r") as f:
+        knowledge_base = json.load(f)
+except FileNotFoundError:
+    pass
+
+# Function to save the current knowledge base to a file
+def save_knowledge_base():
+    with open("knowledge_base.json", "w") as f:
+        json.dump(knowledge_base, f)
+
+# Function to train the chatbot on a new input-output pair
+def train(input_text, output_text):
+    input_blob = TextBlob(input_text.lower())
+    for word in input_blob.words:
+        if word not in knowledge_base:
+            knowledge_base[word] = {"count": 0, "output": {}}
+        knowledge_base[word]["count"] += 1
+        if output_text not in knowledge_base[word]["output"]:
+            knowledge_base[word]["output"][output_text] = 0
+        knowledge_base[word]["output"][output_text] += 1
+    save_knowledge_base()
+
+# Function to generate a response based on user input
+def get_bot_response(user_input):
+    input_blob = TextBlob(user_input.lower())
+    output_scores = {}
+    for word in input_blob.words:
+        if word in knowledge_base:
+            for output_text, count in knowledge_base[word]["output"].items():
+                output_scores[output_text] = output_scores.get(output_text, 0) + count / knowledge_base[word]["count"]
+    if output_scores:
+        return max(output_scores, key=output_scores.get)
+    else:
+        return "I'm sorry, I don't understand. Can you please rephrase your question?"
+
+# Main loop for the chatbot
+while True:
+    user_input = input("User: ")
+    bot_response = get_bot_response(user_input)
+    print("Bot:", bot_response)
+    if bot_response == "I'm sorry, I don't understand. Can you please rephrase your question?":
+        new_output = input("Bot: " + bot_response + " ")
+        train(user_input, new_output)
+        print("Bot: Okay, I'll remember that.")
+        
+# CREATED WITH THE HELP OF CHAT-GPT-4: https://chat.openai.com/chat
