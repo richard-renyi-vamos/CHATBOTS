@@ -1,0 +1,31 @@
+import nltk
+from nltk.chat.util import Chat, reflections
+
+pairs = [
+    [
+        r"my name is (.*)",
+        ["Hello %1, how can I help you today?"]
+    ],
+    [
+        r"hi|hello|hey",
+        ["Hello, how can I assist you today?"]
+    ],
+    [
+        r"what is your name?",
+        ["My name is Chatbot. How can I assist you today?"]
+    ],
+    [
+        r"bye|goodbye",
+        ["Goodbye, have a nice day!"]
+    ],
+]
+
+def chatbot():
+    print("Hi, I'm Chatbot. How can I assist you today?")
+    chat = Chat(pairs, reflections)
+    chat.converse()
+
+if __name__ == "__main__":
+    chatbot()
+    
+    # CREATED WITH THE HELP OF CHAT-GPT-4: https://chat.openai.com/chat
