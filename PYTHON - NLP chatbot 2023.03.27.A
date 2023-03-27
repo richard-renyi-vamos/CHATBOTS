@@ -1,0 +1,65 @@
+import nltk
+import numpy as np
+import random
+import string
+
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+
+nltk.download('punkt')
+nltk.download('wordnet')
+
+# define a function to preprocess the user's input
+def preprocess_input(input_text):
+    # convert input text to lowercase
+    input_text = input_text.lower()
+    # remove punctuation
+    input_text = input_text.translate(str.maketrans('', '', string.punctuation))
+    # tokenize input text
+    tokens = nltk.word_tokenize(input_text)
+    # lemmatize tokens
+    lemmatizer = nltk.stem.WordNetLemmatizer()
+    tokens = [lemmatizer.lemmatize(token) for token in tokens]
+    # return preprocessed text as a string
+    return ' '.join(tokens)
+
+# define some sample responses
+responses = {
+    'hello': ['Hi there!', 'Hello!', 'Hi, how can I help you?'],
+    'goodbye': ['Goodbye!', 'See you later!', 'Bye!'],
+    'thanks': ['You\'re welcome!', 'No problem!', 'My pleasure.']
+}
+
+# define some sample conversation history
+history = ['Hello!', 'Hi there. How can I help you?', 'Can you give me some information about your products?', 'Sure. What do you want to know?']
+
+# train the chatbot on the conversation history
+tfidf_vectorizer = TfidfVectorizer(tokenizer=nltk.word_tokenize, stop_words='english')
+tfidf = tfidf_vectorizer.fit_transform(history)
+similarity_matrix = cosine_similarity(tfidf[-1], tfidf)
+index = similarity_matrix.argsort()[0][-2]
+response = ''
+if similarity_matrix[0][index] > 0:
+    response = responses[history[index].lower()][random.randint(0, len(responses[history[index].lower()])-1)]
+
+# run the chatbot
+while True:
+    user_input = input('You: ')
+    if user_input.lower() == 'quit':
+        break
+    else:
+        user_input = preprocess_input(user_input)
+        history.append(user_input)
+        tfidf = tfidf_vectorizer.fit_transform(history)
+        similarity_matrix = cosine_similarity(tfidf[-1], tfidf)
+        index = similarity_matrix.argsort()[0][-2]
+        response = ''
+        if similarity_matrix[0][index] > 0:
+            response = responses[history[index].lower()][random.randint(0, len(responses[history[index].lower()])-1)]
+        else:
+            response = 'I\'m sorry, I don\'t understand what you\'re asking. Can you please rephrase your question?'
+        print('Chatbot: ' + response)
+
+# CREATED WITH THE HELP OF OPEN AI CHAT-GPT: https://chat.openai.com/chat
+
+# Natural Language Processing (NLP) and Machine Learning:
