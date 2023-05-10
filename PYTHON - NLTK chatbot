@@ -1,0 +1,29 @@
+import nltk
+from nltk.chat.util import Chat, reflections
+
+# Define the chatbot's responses using a dictionary of patterns and their corresponding responses
+responses = {
+   "hi": "Hello, how can I help you?",
+   "hello": "Hi there, how can I assist you?",
+   "goodbye": "Goodbye! Have a nice day.",
+   "help": "What do you need help with?",
+   "thanks": "You're welcome!",
+   "bye": "See you later!",
+   "default": "Sorry, I didn't understand you. Can you please rephrase your question?"
+}
+
+# Define a function to handle the user's input and generate the chatbot's response
+def chatbot_response(message):
+   """
+   Given a user message, generate a response from the chatbot.
+   """
+   for pattern, response in responses.items():
+      if pattern in message.lower():
+         return response
+   return responses["default"]
+
+# Create an instance of the Chat class and start the chatbot
+chatbot = Chat(pairs=responses.items(), reflections=reflections)
+chatbot.converse()
+
+# CREATED WITH THE HELP OF OPEN-AI CHAT GPT: https://chat.openai.com/chat
