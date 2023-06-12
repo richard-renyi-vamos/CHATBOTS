@@ -1,0 +1,32 @@
+import random
+
+# Define a list of jokes
+jokes = [
+    "Why don't scientists trust atoms? Because they make up everything!",
+    "Did you hear about the mathematician who's afraid of negative numbers? He'll stop at nothing to avoid them!",
+    "Why don't skeletons fight each other? They don't have the guts!",
+    "I'm reading a book about anti-gravity. It's impossible to put down!",
+    "Why did the scarecrow win an award? Because he was outstanding in his field!"
+]
+
+# Define a function to tell a random joke
+def tell_joke():
+    return random.choice(jokes)
+
+# Main conversation loop
+while True:
+    user_input = input("User: ")
+
+    # Check if user wants to hear a joke
+    if "joke" in user_input.lower():
+        bot_response = tell_joke()
+    else:
+        bot_response = "What can I help you with?"
+
+    print("Bot:", bot_response)
+
+    # Exit the loop if user says goodbye
+    if user_input.lower() == "goodbye":
+        break
+
+# CREATED WITH THE HELP OF OPEN-AI CHAT GPT: https://chat.openai.com/chat
