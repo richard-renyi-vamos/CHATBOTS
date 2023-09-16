@@ -1,0 +1,7 @@
+WIKIPEDIA BOT PROMPT
+► create a python code that makes a chatbot
+► it should log all conversations in a log file
+► it should use wikipedia for answers
+► GUI
+
+TOOL: https://poe.com/
