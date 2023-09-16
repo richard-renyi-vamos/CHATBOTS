@@ -1,0 +1,58 @@
+import logging
+import wikipedia
+import tkinter as tk
+from tkinter import scrolledtext, messagebox
+
+# Configure logging
+logging.basicConfig(filename='chatbot.log', level=logging.INFO, format='%(asctime)s - %(message)s')
+
+def send_message():
+    user_input = user_entry.get().strip()
+    logging.info("User: " + user_input)
+    conversation_text.insert(tk.END, "User: " + user_input + "\n")
+    
+    if user_input.lower() == 'exit':
+        messagebox.showinfo("Chatbot", "Thank you for using the chatbot. Goodbye!")
+        logging.info("Chatbot: Thank you for using the chatbot. Goodbye!")
+        root.destroy()
+        return
+    
+    try:
+        # Search Wikipedia for user's input
+        result = wikipedia.summary(user_input, sentences=2)
+        conversation_text.insert(tk.END, "Chatbot: " + result + "\n")
+        logging.info("Chatbot: " + result)
+    except wikipedia.exceptions.DisambiguationError as e:
+        # Handle disambiguation pages
+        options = e.options[:5]  # Limit the number of options to display
+        conversation_text.insert(tk.END, "Chatbot: There are multiple options. Can you please be more specific?\n")
+        logging.info("Chatbot: There are multiple options. Can you please be more specific?")
+        
+        conversation_text.insert(tk.END, "Options:\n")
+        for i, option in enumerate(options):
+            conversation_text.insert(tk.END, f"{i+1}. {option}\n")
+    except wikipedia.exceptions.PageError:
+        conversation_text.insert(tk.END, "Chatbot: Sorry, I couldn't find any information on that topic.\n")
+        logging.info("Chatbot: Sorry, I couldn't find any information on that topic.")
+
+# Create the GUI
+root = tk.Tk()
+root.title("Chatbot")
+
+# Create conversation text widget
+conversation_text = scrolledtext.ScrolledText(root, width=60, height=15)
+conversation_text.pack(padx=10, pady=10)
+
+# Create user input entry widget
+user_entry = tk.Entry(root, width=50)
+user_entry.pack(padx=10, pady=5)
+
+# Create send button
+send_button = tk.Button(root, text="Send", command=send_message)
+send_button.pack(pady=5)
+
+# Start the main GUI loop
+root.mainloop()
+
+
+# CREATED WITH THE HELP OF OPEN-AI CHAT GPT: https://chat.openai.com/chat
